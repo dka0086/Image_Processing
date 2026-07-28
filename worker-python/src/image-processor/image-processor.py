@@ -28,7 +28,32 @@ def clamp(imgArray, u, v):
     v = min(max(v, 0), h-1)
     return imgArray[u,v].astype(np.float64)
 
-def interpolateLanczos3()
+def interpolateLanczos3(imgArray, x0, y0):
+    fx0 = int(np.floor(x0))
+    fy0 = int(np.floor(y0))
+
+    if imgArray.ndim == 2:
+        acc = 0.0
+    else:
+        acc = np.zeros(imgArray.shape[2], dtype=np.float64)
+
+    for j in range(6):
+        vj = fy0 + j - 2
+        wy = lanczos3(y0-vj)
+        if wy == 0:
+            continue
+
+        rowSum = 0.0 if imgArray.ndim == 2 else np.zeros(imgArray.shape[2], dtype=np.float64)
+        for i in range(6):
+            ui = fx0 + i - 2
+            wx = lanczos3(x0 - ui)
+            if wx == 0:
+                continue
+            rowSum = rowSum + clamp(imgArray, ui, vj) * wx
+ 
+        acc = acc + wy * rowSum
+ 
+    return acc
 
 def filterBlackAndWhite(imageName, outputPath):
     image = getImage(imageName)
