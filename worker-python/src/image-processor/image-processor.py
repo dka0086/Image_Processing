@@ -39,21 +39,49 @@ def interpolateLanczos3(imgArray, x0, y0):
 
     for j in range(6):
         vj = fy0 + j - 2
-        wy = lanczos3(y0-vj)
-        if wy == 0:
-            continue
+        w_l3y = lanczos3(y0-vj)
+        if w_l3y == 0:
+            continue #Pula a iteração
 
         rowSum = 0.0 if imgArray.ndim == 2 else np.zeros(imgArray.shape[2], dtype=np.float64)
         for i in range(6):
             ui = fx0 + i - 2
-            wx = lanczos3(x0 - ui)
-            if wx == 0:
-                continue
-            rowSum = rowSum + clamp(imgArray, ui, vj) * wx
+            w_l3x = lanczos3(x0 - ui)
+            if w_l3x == 0:
+                continue #Pula a iteração
+            rowSum = rowSum + clamp(imgArray, ui, vj)*w_l3x
  
-        acc = acc + wy * rowSum
+        acc = acc + w_l3y * rowSum
  
     return acc
+
+def resizeLanczos3(imageName, outputPath, scale):
+    image = getImage(imageName)
+    imgArray = image.numpy()  
+
+    inH, inW = imgArray.shape[0], imgArray.shape[1]
+    outH = int(round(inH * scale))
+    outW = int(round(inW * scale))
+
+    sy = inH / outH
+    sx = inW / outW
+
+    if imgArray.ndim == 2:
+        out = np.zeros((outH, outW), dtype=np.float64)
+    else:
+        out = np.zeros((outH, outW, imgArray.shape[2]), dtype=np.float64)
+
+    for oy in range(outH):
+        y0 = (oy + 0.5) * sy - 0.5
+        for ox in range(outW):
+            x0 = (ox + 0.5) * sx - 0.5
+            out[oy, ox] = interpolateLanczos3(imgArray, x0, y0)
+
+    out = np.clip(out, 0, 255).astype(np.uint8)
+
+    outImage = pyvips.Image.new_from_array(out)
+    outImage.write_to_file(outputPath)
+    return outImage
 
 def filterBlackAndWhite(imageName, outputPath):
     image = getImage(imageName)
