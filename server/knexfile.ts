@@ -2,7 +2,7 @@ import dotenv from "dotenv"
 import type { Knex } from "knex"
 
 dotenv.config()
-const config: {[key: string]: Knex.Config} = {
+export const config: {[key: string]: Knex.Config} = {
   development: {
     client: "pg",
     connection: {

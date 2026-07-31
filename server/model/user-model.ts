@@ -1,5 +1,5 @@
-export interface UserModel{
-    usernamename: string,
+export type UserModel = {
+    username: string,
     email: string,
     password: string
 }
