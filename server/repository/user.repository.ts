@@ -1,19 +1,19 @@
 import { knex } from "../database/knex";
 import { UserDTO } from "../dtos/user.dto";
-import { UserModel } from "../model/user-model";
+import { UserModel } from "../model/user.model";
 
 export class UserRepository{
-    async findByEmail(email: string): Promise<boolean>{
+    public async findByEmail(email: string): Promise<UserModel | undefined>{
         const userEmail = await knex<UserModel>("Users").where({"email": email}).first()
-        return !!(userEmail)
+        return userEmail
     }
 
-    async findById(id: number): Promise<UserModel>{
-        const [user] = await knex<UserModel>("Users").where({"id": id}).first().returning("*")
+    public async findById(id: number): Promise<UserModel>{
+        const [user] = await knex<UserModel>("Users").where({"id": id})
         return user
     }
 
-    async save(user: UserDTO): Promise<UserModel>{
+    public async save(user: UserDTO): Promise<UserModel>{
         const [newUser] = await knex<UserModel>("Users").insert(
                 { 
                     username: user.username,
@@ -25,13 +25,18 @@ export class UserRepository{
         return newUser
     }
 
-    async update(email: string): Promise<boolean>{
+    public async update(email: string): Promise<boolean>{
         const userEmail = await knex<UserModel>("Users").where({"email": email}).first()
         return !!(userEmail)
     }
 
-    async deleteByEmail(email: string): Promise<UserModel>{
-        const [user] = await knex<UserModel>("Users").delete().where({"email": email}).first().returning("*")
+    public async deleteByEmail(email: string): Promise<UserModel>{
+        const [user] = await knex<UserModel>("Users").where({"email": email}).delete().returning("*")
         return user
+    }
+
+    public async findAll(): Promise<UserModel[]>{
+        const users = await knex<UserModel>("Users").select("*")
+        return users
     }
 }
