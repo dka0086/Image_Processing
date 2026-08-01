@@ -8,12 +8,7 @@ export class UserService {
             if(user == null || hasInDb){
                 throw new Error("Fields ")
             }
-            const [newUser] = await knex<UserModel>("Users").insert(
-                {
-                    username: user.username,
-                    email: user.email,
-                    password: user.password
-                }).returning("*")
+            
             
             return newUser
         }catch(err: any){
