@@ -1,20 +1,19 @@
 import { UserModel } from "../model/user.model"
 import {knex} from "../database/knex"
 import { UserRepository } from "../repository/user.repository"
+import { UserDTO } from "../dtos/user.dto"
 
 export class UserService {
     constructor(private repository = new UserRepository()) {}
-    public async insertUser(user: UserModel){
+    public async insertUser(user: UserDTO){
         try{
             if(user == null){
                 throw new Error("Campos vazios.")
             }
-
             const hasInDb = await this.repository.findByEmail(user.email)
             if (hasInDb) {
                 throw new ConflictError("Email já cadastrado");
             }
-            
             const newUser = await this.repository.save(user)
             return newUser
         }catch(err: any){

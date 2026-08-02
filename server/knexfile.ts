@@ -29,3 +29,5 @@ export const config: {[key: string]: Knex.Config} = {
     },
   },   
 }
+
+export default config 
