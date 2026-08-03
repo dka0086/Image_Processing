@@ -2,6 +2,8 @@ import { UserModel } from "../model/user.model"
 import {knex} from "../database/knex"
 import { UserRepository } from "../repository/user.repository"
 import { UserDTO } from "../dtos/user.dto"
+import { ConflictError } from "../errors/conflict-error"
+import { NotFoundError } from "../errors/notfound-error"
 
 export class UserService {
     constructor(private repository = new UserRepository()) {}

@@ -1,7 +1,7 @@
 import { AppError } from "./app-error"
 
-export class ConflictError extends AppError{
+export class NotFoundError extends AppError{
     constructor(errorMessage: string){
-        super(errorMessage, 400) 
+        super(errorMessage, 404) 
     }
 }
