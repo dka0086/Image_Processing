@@ -22,3 +22,6 @@ __pycache__/
 *.log
 saida_*.jpg
 saida_*.png
+
+#Server
+node_modules
