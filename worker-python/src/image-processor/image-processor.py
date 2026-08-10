@@ -1,6 +1,8 @@
 import pyvips
 import numpy as np
 
+#image filter
+
 def getImage(imageName):
     image = pyvips.Image.new_from_file(imageName, access='sequential')
     return image
@@ -26,7 +28,7 @@ def clamp(imgArray, u, v):
     h, w = imgArray.shape[0], imgArray.shape[1]
     u = min(max(u, 0), w-1)
     v = min(max(v, 0), h-1)
-    return imgArray[u,v].astype(np.float64)
+    return imgArray[v,u].astype(np.float64)
 
 def interpolateLanczos3(imgArray, x0, y0):
     fx0 = int(np.floor(x0))
@@ -55,6 +57,7 @@ def interpolateLanczos3(imgArray, x0, y0):
  
     return acc
 
+#Inverse mapping
 def resizeLanczos3(imageName, outputPath, scale):
     image = getImage(imageName)
     imgArray = image.numpy()  
@@ -86,7 +89,20 @@ def resizeLanczos3(imageName, outputPath, scale):
 def filterBlackAndWhite(imageName, outputPath):
     image = getImage(imageName)
     img_BW = image.colourspace('b-w')
-    img_BW = image.write_to_file(outputPath)
+    img_BW.image.write_to_file(outputPath)
     return img_BW
 
+def toJPEG(imageName, outputPath, quality=85):
+    image = getImage(imageName)
+    image.jpegsave(outputPath, Q=quality)  
+    return image
 
+def toPNG(imageName, outputPath, compression=6):
+    image = getImage(imageName)
+    image.pngsave(outputPath, C=compression)  
+    return image
+
+def toWEBP(imageName, outputPath, quality=85):
+    image = getImage(imageName)
+    image.webpsave(outputPath, Q=quality)  
+    return image
