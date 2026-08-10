@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction, response } from "express";
-import { knex } from "../../database/knex";
+import { knex } from "../database/knex";
 import { UserDTO } from "../dtos/user.dto";
 import { UserService } from "../services/user-service";
 import { z } from "zod"
@@ -20,7 +20,18 @@ export class UserController{
             const resDTO: UserResponseDTO = {username: newUser.username, email: newUser.email}
             return res.status(201).json(resDTO)
         }catch(err){
-            next(err);
+            next(err)
+        }
+    }
+
+    public async selectByEmail(req: Request, res: Response, next: NextFunction){
+        try{
+            const {email} = req.body
+            const user = this.service.selectUserByEmail(email)
+            const dto = this.userSchema.parse(user)
+            res.json(dto)
+        }catch(err){
+            next(err)
         }
     }
 }

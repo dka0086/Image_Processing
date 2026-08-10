@@ -19,8 +19,8 @@ export class UserRepository{
                     username: user.username,
                     email: user.email,
                     password: user.password,
-                    created_at: Date.now(),
-                    updated_at: Date.now(),
+                    created_at: new Date(),
+                    updated_at: new Date(),
                 }).returning("*")
         return newUser
     }

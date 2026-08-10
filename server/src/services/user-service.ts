@@ -31,7 +31,7 @@ export class UserService {
 
             const user = await this.repository.findByEmail(email)
             if (!user) {
-                throw new NotFoundError("Email não cadastrado");
+                throw new NotFoundError("Email não cadastrado")
             }
             return user
         }catch(err: any){
@@ -61,6 +61,18 @@ export class UserService {
             return users
         }catch(err: any){
             throw new Error("Database exception.")
+        }
+    }
+
+    public async deleteByEmail(email: string){
+        try{
+            if(email==""){
+                throw new Error("email vazio")
+            }
+            const user = await this.repository.deleteByEmail(email)
+            return user
+        }catch(err: any){
+            throw new NotFoundError("Usuário não cadastrado")
         }
     }
 }
