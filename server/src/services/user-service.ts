@@ -39,7 +39,7 @@ export class UserService {
         }
     }
 
-    public async selectUserById(id: number){
+    public async selectUserById(id: string){
         try{
             if(id == null){
                 throw new Error("Campo vazio.")

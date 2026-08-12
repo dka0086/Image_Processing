@@ -8,7 +8,7 @@ export const config: {[key: string]: Knex.Config} = {
     connection: {
        //connectionString: config.DATABASE_URL,
        host: process.env.DB_HOST || "localhost",
-       port: Number(process.env.DB_PORT) || 5432,
+       port: Number(process.env.DB_PORT) || 5434,
        database: process.env.DB_NAME || "media_db",
        user: process.env.DB_USER || "user",
        password: process.env.DB_PASSWORD || "password123",
@@ -30,4 +30,4 @@ export const config: {[key: string]: Knex.Config} = {
   },   
 }
 
-export default config 
+export default config.development;
