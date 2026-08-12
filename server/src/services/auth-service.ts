@@ -23,6 +23,9 @@ export class AuthService {
         throw new ConflictError("Email já cadastrado");
       }
       const passwordMatches = await bcrypt.compare(password, user.password);
+      if (!passwordMatches) {
+            throw new UnauthorizedError("Email ou senha inválidos");
+        }
       const token = jwt.sign(
         { userId: user.id, email: user.email },
         process.env.JWT_SECRET!,
