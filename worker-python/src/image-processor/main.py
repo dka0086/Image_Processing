@@ -27,7 +27,7 @@ def notify_callback(callback_url: str, payload: dict):
         print(f"Falha ao notificar callback {callback_url}: {e}")
 
 
-def process_job(raw_json: str):
+def process_job(raw_json: str) -> None:
     job = image_job.model_validate_json(raw_json)
     output_path = f"/data/output/{job.job_id}.png"
 
@@ -55,7 +55,7 @@ def process_job(raw_json: str):
             "status": "failed",
             "error": str(e),
         })
-    #Request do frontend
+
 
     
 
