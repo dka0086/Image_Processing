@@ -16,8 +16,8 @@ export class ImageController {
             job_id: jobId,
             type: "Upscale",
             image_path: req.file?.path,
-            scale: this.imageSchema(),
-            callback_url:
+            size: this.imageSchema.parse(req.body["size"]),
+            callback_url: `${process.env.API_BASE_URL}/images/callback`
         } 
     }
 }
