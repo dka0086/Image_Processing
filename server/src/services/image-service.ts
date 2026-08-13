@@ -1,9 +1,14 @@
 import { redis } from "../redis/client";
-import { randomUUID } from "crypto"
+import { randomUUID, UUID } from "crypto"
+
+type JobStatus = "queued" | "processing" | "completed" | "failed"
 
 export class Imageservice {
-    public setJobObject = async (path: string, sizeW: number, sizeH: number) => {
-        
+    private jobKey(jobId: string, field: "status" | "result" | "error"): string {
+        return `job ${jobId} - ${field}:`;
+    }
+
+    public setJobObject = async (path: string, sizeW: number, sizeH: number) => {   
         const jobId = randomUUID();
           const jobObject = {
             job_id: jobId,
@@ -18,5 +23,13 @@ export class Imageservice {
           await redis.rpush("image-processing-queue", JSON.stringify(jobObject));
 
           return jobId
+    }
+
+    public jobStatus = async (uuid: string) => {
+        const status = await redis.get(this.jobKey(uuid, "status"));
+        const result = await redis.get(this.jobKey(uuid, "result"));
+        const error = await redis.get(this.jobKey(uuid, "error"));
+
+        return { status: status as JobStatus | null, result, error };
     }
 }

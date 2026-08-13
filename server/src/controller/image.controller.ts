@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction} from "express";
-import { upload } from "../middlewares/upload.middleware"
 import { z } from "zod"
 import { Imageservice } from "../services/image-service";
+import { NotFoundError } from "../errors/notfound-error";
 
 export class ImageController {
     constructor(private service = new Imageservice()){}
@@ -11,6 +11,11 @@ export class ImageController {
             sizeW: z.number().positive().max(10000),
             sizeH: z.number().positive().max(10000),
         })
+
+    jobIdParamSchema = z.object({
+        jobId: z.uuid(),
+    })
+
 
     public upscaleLanczos3 = async (req: Request, res: Response, next: NextFunction) => {
         try {
@@ -23,6 +28,21 @@ export class ImageController {
           res.status(202).json({ jobId, status: "queued" })
         } catch (err) {
           next(err)
+        }
+    }
+
+    public getStatus = async(req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { jobId } = this.jobIdParamSchema.parse(req.params)
+            const jobStatus = await this.service.jobStatus(jobId);
+
+            if (!jobStatus.status) {
+                throw new NotFoundError("Job não encontrado");
+            }
+
+            res.json({ jobId, ...jobStatus });
+        } catch (err) {
+            next(err);
         }
     }
 }
