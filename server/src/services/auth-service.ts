@@ -4,6 +4,7 @@ import { ConflictError } from "../errors/conflict-error"
 import { NotFoundError } from "../errors/notfound-error"
 import { UserRepository } from "../repository/user.repository"
 import jwt from "jsonwebtoken"
+import { UnauthorizedError } from "../errors/unauthorized-error"
 
 export class AuthService {
   constructor(private repository = new UserRepository()) {}
@@ -35,7 +36,29 @@ export class AuthService {
     } catch (err: any) {
       throw new Error("Database exception.");
     }
-  };
+  }
 
-  public userIsAdmin = async (user: UserDTO) => {};
+  public userIsAdmin = async (email: string, password: string) => {
+    try {
+      if (password == null || email == null) {
+        throw new Error("Campos vazios.");
+      }
+      const user = await this.repository.findByEmail(email);
+      if (!user) {
+        throw new ConflictError("Email já cadastrado");
+      }
+      const passwordMatches = await bcrypt.compare(password, user.password);
+      if (!passwordMatches) {
+            throw new UnauthorizedError("Email ou senha inválidos");
+        }
+      const token = jwt.sign(
+        { userId: user.id, email: user.email },
+        process.env.JWT_SECRET!,
+        { expiresIn: "1h" },
+      );
+      return { token, user };
+    } catch (err: any) {
+      throw new Error("Database exception.");
+    }
+  }
 }
