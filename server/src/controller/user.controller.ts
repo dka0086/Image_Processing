@@ -13,7 +13,7 @@ export class UserController{
         password: z.string().min(5).max(50),
     })
 
-    public async create(req: Request, res: Response, next: NextFunction){
+    public create = async (req: Request, res: Response, next: NextFunction) => {
         try{
             const dto = this.userSchema.parse(req.body)
             const newUser = await this.service.insertUser(dto)
@@ -24,11 +24,11 @@ export class UserController{
         }
     }
 
-    public async selectByEmail(req: Request, res: Response, next: NextFunction){
+    public selectByEmail = async (req: Request, res: Response, next: NextFunction) => {
         try{
-            const {email} = req.body
-            const user = this.service.selectUserByEmail(email)
-            const dto = this.userSchema.parse(user)
+            const {email} = req.params
+            const user = await this.service.selectUserByEmail(email)
+            const dto: UserResponseDTO = { username: user.username, email: user.email }
             res.json(dto)
         }catch(err){
             next(err)

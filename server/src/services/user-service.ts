@@ -4,6 +4,7 @@ import { UserRepository } from "../repository/user.repository"
 import { UserDTO } from "../dtos/user.dto"
 import { ConflictError } from "../errors/conflict-error"
 import { NotFoundError } from "../errors/notfound-error"
+import { AuthService as auth } from "./auth-service"
 
 export class UserService {
     constructor(private repository = new UserRepository()) {}
@@ -16,7 +17,11 @@ export class UserService {
             if (hasInDb) {
                 throw new ConflictError("Email já cadastrado");
             }
-            const newUser = await this.repository.save(user)
+            const hashedPassword = await auth.hashPassword(user.password)
+            const newUser = await this.repository.save({
+            ...user,
+            password: hashedPassword,
+        })
             return newUser
         }catch(err: any){
             throw new Error("Database exception.")
@@ -39,7 +44,7 @@ export class UserService {
         }
     }
 
-    public async selectUserById(id: number){
+    public async selectUserById(id: string){
         try{
             if(id == null){
                 throw new Error("Campo vazio.")
