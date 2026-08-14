@@ -7,6 +7,7 @@ export class ImageController {
     constructor(private service = new Imageservice()){}
     imageSchema = z.object({
             fileName: z.string().min(2).max(70),
+            type: z.string().min(4).max(30),
             scale: z.number(),
             sizeW: z.number().positive().max(10000),
             sizeH: z.number().positive().max(10000),
@@ -23,7 +24,7 @@ export class ImageController {
             throw new Error("Imagem não enviada");
           }
           const imageBody = this.imageSchema.parse(req.body)
-          const jobId = this.service.setJobObject(req.file?.path, imageBody.sizeW, imageBody.sizeH)
+          const jobId = this.service.insertImageJob(req.file?.path, imageBody.type , imageBody.sizeW, imageBody.sizeH)
           
           res.status(202).json({ jobId, status: "queued" })
         } catch (err) {

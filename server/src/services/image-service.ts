@@ -1,15 +1,18 @@
 import { redis } from "../redis/client";
 import { randomUUID, UUID } from "crypto"
+import { ImageRepository } from "../repository/images.repository";
+import { ImageModel } from "../model/images.model";
 
 type JobStatus = "queued" | "processing" | "completed" | "failed"
 
 export class Imageservice {
+    constructor(private repository = new ImageRepository()) {}
     private jobKey(jobId: string, field: "status" | "result" | "error"): string {
         return `job ${jobId} - ${field}:`;
     }
 
-    public setJobObject = async (path: string, sizeW: number, sizeH: number) => {   
-        const jobId = randomUUID();
+    public insertImageJob = async (path: string, sizeW: number, sizeH: number) => {   
+        const jobObject = new ImageModel()
           const jobObject = {
             job_id: jobId,
             type: "Upscale",

@@ -5,6 +5,7 @@ export async function up(knex: Knex): Promise<void> {
     return knex.schema.createTable("images", (table) => {
     table.uuid("id").primary().defaultTo(knex.raw("gen_random_uuid()")); 
     table.uuid("user_id").notNullable().references("id").inTable("users").onDelete("CASCADE");
+    table.string("img_input_path", 100).notNullable();
     table.string("type", 30).notNullable();
     table.integer("scale").nullable();
     table.integer("width").nullable();
