@@ -1,4 +1,4 @@
-import { UserDTO } from "../dtos/user.dto"
+import { UserResponseDTO, toUserResponse } from "../dtos/user-response.dto"
 import bcrypt from "bcrypt"
 import { ConflictError } from "../errors/conflict-error"
 import { NotFoundError } from "../errors/notfound-error"
@@ -32,9 +32,9 @@ export class AuthService {
         process.env.JWT_SECRET!,
         { expiresIn: "1h" },
       );
-      return { token, user };
+      return { token, user: toUserResponse(user) }
     } catch (err: any) {
-      throw new Error("Database exception.");
+      throw new Error("Database exception.")
     }
   }
 
