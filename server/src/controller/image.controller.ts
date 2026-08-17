@@ -2,6 +2,7 @@ import { Request, Response, NextFunction} from "express";
 import { z } from "zod"
 import { Imageservice } from "../services/image-service";
 import { NotFoundError } from "../errors/notfound-error";
+import { requireAuth } from "../middlewares/auth.middleware"
 
 export class ImageController {
     constructor(private service = new Imageservice()){}
@@ -24,7 +25,7 @@ export class ImageController {
             throw new Error("Imagem não enviada");
           }
           const imageBody = this.imageSchema.parse(req.body)
-          const jobId = this.service.insertImageJob(req.file?.path, imageBody.type , imageBody.sizeW, imageBody.sizeH)
+          const jobId = await this.service.insertImageJob(req.userId!, req.file.path, imageBody.type , imageBody.sizeW, imageBody.sizeH)
           
           res.status(202).json({ jobId, status: "queued" })
         } catch (err) {

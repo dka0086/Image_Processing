@@ -1,10 +1,11 @@
-// types/express.d.ts
-declare global {
-    namespace Express {
-        interface Request {
-            userId?: string;
-        }
-    }
-}
+import * as multer from "multer";
 
-export {};
+declare global {
+  namespace Express {
+    interface Request {
+      userId?: string;
+      file?: Express.Multer.File;
+      files?: Express.Multer.File[] | { [fieldname: string]: Express.Multer.File[] };
+    }
+  }
+}
