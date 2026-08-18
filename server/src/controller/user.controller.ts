@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction, response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { knex } from "../database/knex";
 import { UserDTO } from "../dtos/user.dto";
 import { UserService } from "../services/user-service";
